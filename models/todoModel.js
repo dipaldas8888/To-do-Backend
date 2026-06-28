@@ -1,24 +1,23 @@
-const { DataTypes } = require("sequelize");
-const { sequelize } = require("../config/db");
-const User = require("./userModel");
+const mongoose = require("mongoose");
 
-const Todo = sequelize.define("Todo", {
-  id: {
-    type: DataTypes.INTEGER,
-    autoIncrement: true,
-    primaryKey: true,
+const todoSchema = new mongoose.Schema(
+  {
+    text: {
+      type: String,
+      required: true,
+      trim: true,
+    },
+    completed: {
+      type: Boolean,
+      default: false,
+    },
+    user: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      required: true,
+    },
   },
-  text: {
-    type: DataTypes.STRING,
-    allowNull: false,
-  },
-  completed: {
-    type: DataTypes.BOOLEAN,
-    defaultValue: false,
-  },
-});
+  { timestamps: true },
+);
 
-User.hasMany(Todo, { foreignKey: "userId" });
-Todo.belongsTo(User, { foreignKey: "userId" });
-
-module.exports = Todo;
+module.exports = mongoose.model("Todo", todoSchema);

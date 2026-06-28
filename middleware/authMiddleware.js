@@ -10,14 +10,9 @@ const protect = async (req, res, next) => {
   ) {
     try {
       token = req.headers.authorization.split(" ")[1];
-
-      // Verify token
       const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
-      // Find user in MySQL using Sequelize
-      const user = await User.findByPk(decoded.id, {
-        attributes: { exclude: ["password"] }, // exclude password
-      });
+      const user = await User.findById(decoded.id).select("-password");
 
       if (!user) {
         return res
